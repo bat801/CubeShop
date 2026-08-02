@@ -13,7 +13,6 @@ public class GridManager : MonoBehaviour
     [Header("Визуализация сетки")]
     [SerializeField] private bool showGrid = true;
     [SerializeField] private Color gridColor = new Color(1, 1, 1, 0.3f);
-    [SerializeField] private LineRenderer gridLinePrefab;
 
     private bool[,] occupancyGrid;
     private List<Vector2Int> occupiedCells = new List<Vector2Int>();
@@ -69,6 +68,9 @@ public class GridManager : MonoBehaviour
             Vector3 end = new Vector3(-width / 2 + x, 0.01f, height / 2);
             CreateGridLine(start, end);
         }
+
+        // Добавляем лог для отладки
+        Debug.Log($"Сетка создана: {shopSize.x}x{shopSize.y} клеток");
     }
 
     private void CreateGridLine(Vector3 start, Vector3 end)
@@ -90,7 +92,10 @@ public class GridManager : MonoBehaviour
     public void ShowGrid(bool show)
     {
         if (gridVisualization != null)
+        {
             gridVisualization.SetActive(show);
+            Debug.Log($"Сетка {(show ? "показана" : "скрыта")}");
+        }
     }
 
     public Vector3 SnapToGrid(Vector3 worldPosition)

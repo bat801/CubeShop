@@ -57,6 +57,12 @@ public class PlacementManager : MonoBehaviour
 
     public void EnterBuildMode(ItemData item)
     {
+        if (item == null)
+        {
+            Debug.LogError("ItemData is null!");
+            return;
+        }
+
         if (!GameManager.Instance.CanAfford(item.buyPrice))
         {
             UIManager.Instance.ShowNotification("Недостаточно денег!");
@@ -68,6 +74,13 @@ public class PlacementManager : MonoBehaviour
 
         // Создаем призрака
         if (currentGhost != null) Destroy(currentGhost);
+
+        if (ghostPrefab == null)
+        {
+            Debug.LogError("Ghost Prefab не назначен в PlacementManager!");
+            return;
+        }
+
         currentGhost = Instantiate(ghostPrefab);
 
         // Меняем размер и цвет призрака в зависимости от предмета
@@ -96,13 +109,22 @@ public class PlacementManager : MonoBehaviour
             Destroy(currentGhost);
             currentGhost = null;
         }
-        GridManager.Instance.ShowGrid(false);
+        GridManager.Instance?.ShowGrid(false);
         selectedItem = null;
-        UIManager.Instance.ClearInventorySlot();
+        UIManager.Instance?.ClearInventorySlot();
+
+        // Скрываем панель строительства
+        if (UIManager.Instance != null)
+        {
+            // Вызываем через рефлексию или просто через публичный метод
+            // Пока оставим так
+        }
     }
 
     private bool CanPlaceItem(Vector3 position)
     {
+        if (selectedItem == null) return false;
+
         // Проверка внутри магазина
         if (!GridManager.Instance.IsInsideShop(position))
             return false;
@@ -126,9 +148,11 @@ public class PlacementManager : MonoBehaviour
 
     private void PlaceItem(Vector3 position)
     {
+        if (selectedItem == null) return;
+
         if (!GameManager.Instance.SpendMoney(selectedItem.buyPrice))
         {
-            UIManager.Instance.ShowNotification("Недостаточно денег!");
+            UIManager.Instance?.ShowNotification("Недостаточно денег!");
             return;
         }
 
@@ -143,7 +167,7 @@ public class PlacementManager : MonoBehaviour
         GridManager.Instance.OccupyCells(position, selectedItem.gridSize);
 
         // Выходим из режима строительства
-        UIManager.Instance.ShowNotification($"{selectedItem.displayName} установлен!");
+        UIManager.Instance?.ShowNotification($"{selectedItem.displayName} установлен!");
         ExitBuildMode();
     }
 

@@ -10,21 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 32ef1cb4946fe60478286e29d8d5eff0, type: 3}
-  m_Name: Item_CashRegister
+  m_Name: Item_Table
   m_EditorClassIdentifier: 
   id: 
-  displayName: "\u041A\u0430\u0441\u0441\u0430"
+  displayName: "\u0421\u0442\u043E\u043B"
   icon: {fileID: 0}
-  prefab: {fileID: 0}
+  prefab: {fileID: 7351711544712056983, guid: 870d94c116b2939408310cd11abdf5d6, type: 3}
   description: 
-  buyPrice: 100
+  buyPrice: 80
   sellPrice: 10
   gridSize: {x: 1, y: 1}
   height: 0.5
-  itemType: 1
+  itemType: 0
   isFurniture: 1
   isStackable: 0
   craftTime: 0
   recipeIngredients: []
   craftResult: {fileID: 0}
-  prototypeColor: {r: 0.13207549, g: 0.13207549, b: 0.13207549, a: 1}
+  prototypeColor: {r: 0, g: 0.1731019, b: 1, a: 1}

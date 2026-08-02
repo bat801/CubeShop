@@ -10,21 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 32ef1cb4946fe60478286e29d8d5eff0, type: 3}
-  m_Name: Item_CoffeeMachine
+  m_Name: Item_CashRegister
   m_EditorClassIdentifier: 
   id: 
-  displayName: "\u041A\u043E\u0444\u0435\u043C\u0430\u0448\u0438\u043D\u0430"
+  displayName: "\u041A\u0430\u0441\u0441\u0430"
   icon: {fileID: 0}
-  prefab: {fileID: 0}
+  prefab: {fileID: 7351711544712056983, guid: b0e794950d900bf45bd95d571ca05329, type: 3}
   description: 
-  buyPrice: 150
+  buyPrice: 100
   sellPrice: 10
-  gridSize: {x: 1, y: 1}
-  height: 0.5
+  gridSize: {x: 1, y: 2}
+  height: 0.25
   itemType: 1
   isFurniture: 1
   isStackable: 0
-  craftTime: 5
+  craftTime: 0
   recipeIngredients: []
   craftResult: {fileID: 0}
-  prototypeColor: {r: 0.5660378, g: 0, b: 0.016626053, a: 1}
+  prototypeColor: {r: 0.13207549, g: 0.13207549, b: 0.13207549, a: 1}

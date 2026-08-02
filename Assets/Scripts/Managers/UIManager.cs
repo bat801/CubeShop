@@ -19,7 +19,16 @@ public class UIManager : MonoBehaviour
     [Header("Панель действий")]
     [SerializeField] private Button buildButton;
     [SerializeField] private Button shopButton;
-    [SerializeField] private GameObject buildPanel; // Панель строительства
+    [SerializeField] private Button statsButton;
+    [SerializeField] private GameObject buildPanel;
+
+    [Header("Ссылки на предметы для строительства")]
+    [SerializeField] private Button btnTable;
+    [SerializeField] private Button btnCashRegister;
+    [SerializeField] private Button btnCoffeeMachine;
+
+    private bool isBuildModeActive = false;
+    private ItemData selectedBuildItem;
 
     private void Awake()
     {
@@ -47,11 +56,47 @@ public class UIManager : MonoBehaviour
         if (buildButton != null)
             buildButton.onClick.AddListener(ToggleBuildMode);
 
+        // Настраиваем кнопки выбора предметов
+        if (btnTable != null)
+            btnTable.onClick.AddListener(() => SelectBuildItem("Item_Table"));
+
+        if (btnCashRegister != null)
+            btnCashRegister.onClick.AddListener(() => SelectBuildItem("Item_CashRegister"));
+
+        if (btnCoffeeMachine != null)
+            btnCoffeeMachine.onClick.AddListener(() => SelectBuildItem("Item_CoffeeMachine"));
+
         // Инициализация UI
         UpdateMoneyUI(GameManager.Instance.GetMoney());
         UpdateLevelUI(GameManager.Instance.GetLevel());
         UpdateExpUI(0f);
         ClearInventorySlot();
+
+        // Скрываем панель строительства
+        if (buildPanel != null)
+            buildPanel.SetActive(false);
+    }
+
+    private void SelectBuildItem(string itemName)
+    {
+        // Загружаем ItemData из папки ScriptableObjects
+        ItemData item = Resources.Load<ItemData>($"ScriptableObjects/Items/{itemName}");
+        if (item != null)
+        {
+            selectedBuildItem = item;
+            // Входим в режим строительства
+            if (PlacementManager.Instance != null)
+            {
+                PlacementManager.Instance.EnterBuildMode(item);
+                isBuildModeActive = true;
+                if (buildPanel != null)
+                    buildPanel.SetActive(false);
+            }
+        }
+        else
+        {
+            Debug.LogError($"Не найден ItemData: {itemName}");
+        }
     }
 
     public void UpdateMoneyUI(int money)
@@ -93,12 +138,23 @@ public class UIManager : MonoBehaviour
 
     public void ToggleBuildMode()
     {
-        bool isActive = buildPanel != null ? !buildPanel.activeSelf : false;
-        if (buildPanel != null)
-            buildPanel.SetActive(isActive);
+        if (!isBuildModeActive)
+        {
+            // Показываем панель выбора предметов
+            if (buildPanel != null)
+                buildPanel.SetActive(true);
+        }
+        else
+        {
+            // Выходим из режима строительства
+            if (PlacementManager.Instance != null)
+                PlacementManager.Instance.ExitBuildMode();
 
-        // Здесь будем вызывать PlacementManager
-        Debug.Log($"Build Mode: {(isActive ? "ON" : "OFF")}");
+            isBuildModeActive = false;
+            if (buildPanel != null)
+                buildPanel.SetActive(false);
+        }
+        Debug.Log($"Build Mode: {(isBuildModeActive ? "ON" : "OFF")}");
     }
 
     public void ShowNotification(string message)
