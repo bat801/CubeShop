@@ -15,12 +15,12 @@ MonoBehaviour:
   id: 
   displayName: "\u041A\u0430\u0441\u0441\u0430"
   icon: {fileID: 0}
-  prefab: {fileID: 7351711544712056983, guid: b0e794950d900bf45bd95d571ca05329, type: 3}
+  prefab: {fileID: 3497790810965039440, guid: fef6afe949d487746a0f1445a56c39c1, type: 3}
   description: 
   buyPrice: 100
   sellPrice: 10
-  gridSize: {x: 2, y: 1}
-  height: 0.125
+  gridSize: {x: 2, y: 2}
+  height: 0.25
   itemType: 1
   isFurniture: 1
   isStackable: 0
