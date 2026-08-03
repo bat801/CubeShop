@@ -83,10 +83,13 @@ public class UIManager : MonoBehaviour
         ItemData item = Resources.Load<ItemData>($"ScriptableObjects/Items/{itemName}");
         if (item != null)
         {
-            selectedBuildItem = item;
-            // Входим в режим строительства
             if (PlacementManager.Instance != null)
             {
+                // Проверяем, что префаб назначен
+                if (item.prefab == null)
+                {
+                    Debug.LogWarning($"У {item.displayName} не назначен префаб! Будет использован куб-заглушка.");
+                }
                 PlacementManager.Instance.EnterBuildMode(item);
                 isBuildModeActive = true;
                 if (buildPanel != null)

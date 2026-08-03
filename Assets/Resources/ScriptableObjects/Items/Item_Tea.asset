@@ -15,7 +15,7 @@ MonoBehaviour:
   id: 
   displayName: "\u0427\u0430\u0439"
   icon: {fileID: 0}
-  prefab: {fileID: 0}
+  prefab: {fileID: 3522798851493629944, guid: d1b1eb733bda7784da3225ff1d93c69c, type: 3}
   description: 
   buyPrice: 50
   sellPrice: 5

@@ -8,7 +8,7 @@ public class GridManager : MonoBehaviour
     [Header("Настройки сетки")]
     [SerializeField] private float gridSize = 1f;
     [SerializeField] private Vector2Int shopSize = new Vector2Int(15, 20);
-    [SerializeField] private Vector3 gridOffset = Vector3.zero;
+    [SerializeField] private Vector3 gridOffset = new Vector3(0, 0, 0.5f);
 
     [Header("Визуализация сетки")]
     [SerializeField] private bool showGrid = true;
@@ -98,11 +98,19 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    public Vector3 SnapToGrid(Vector3 worldPosition)
+    public Vector3 SnapToGrid(Vector3 worldPosition, float height)
     {
+        // Получаем позицию ближайшей клетки
         float x = Mathf.Round(worldPosition.x / gridSize) * gridSize;
         float z = Mathf.Round(worldPosition.z / gridSize) * gridSize;
-        return new Vector3(x, 0, z) + gridOffset;
+        float y = height / 2f;
+
+        // Корректировка для объектов с четным размером
+        // Объект размером 1 клетку должен быть в центре клетки
+        // Объект размером 2 клетки должен быть на границе между клетками
+
+
+        return new Vector3(x, y, z) + gridOffset;
     }
 
     public Vector2Int WorldToGrid(Vector3 worldPosition)

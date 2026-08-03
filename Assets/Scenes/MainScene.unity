@@ -1795,7 +1795,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gridSize: 1
   shopSize: {x: 15, y: 20}
-  gridOffset: {x: 0, y: 0, z: 0}
+  gridOffset: {x: 0, y: 0, z: 0.5}
   showGrid: 1
   gridColor: {r: 1, g: 1, b: 1, a: 0.3}
 --- !u!4 &777977027
@@ -3110,7 +3110,6 @@ MonoBehaviour:
   furnitureLayer:
     serializedVersion: 2
     m_Bits: 128
-  ghostPrefab: {fileID: 8741891512968019146, guid: b8ce411e4fcc1d84d9532909ce8ba2e4, type: 3}
 --- !u!4 &1302235531
 Transform:
   m_ObjectHideFlags: 0

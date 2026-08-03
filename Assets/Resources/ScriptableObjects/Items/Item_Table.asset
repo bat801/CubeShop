@@ -20,7 +20,7 @@ MonoBehaviour:
   buyPrice: 80
   sellPrice: 10
   gridSize: {x: 1, y: 1}
-  height: 0.5
+  height: 0.25
   itemType: 0
   isFurniture: 1
   isStackable: 0

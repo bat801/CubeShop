@@ -7,12 +7,10 @@ public class PlacementManager : MonoBehaviour
     [Header("Настройки")]
     [SerializeField] private LayerMask floorLayer;
     [SerializeField] private LayerMask furnitureLayer;
-    [SerializeField] private GameObject ghostPrefab;
 
     private GameObject currentGhost;
     private ItemData selectedItem;
     private bool isBuildMode = false;
-    private Material ghostMaterial;
 
     private void Awake()
     {
@@ -34,7 +32,7 @@ public class PlacementManager : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit, 100f, floorLayer))
         {
-            Vector3 snappedPos = GridManager.Instance.SnapToGrid(hit.point);
+            Vector3 snappedPos = GridManager.Instance.SnapToGrid(hit.point, selectedItem.height);
             currentGhost.transform.position = snappedPos;
 
             // Проверяем возможность установки
@@ -75,30 +73,54 @@ public class PlacementManager : MonoBehaviour
         // Создаем призрака
         if (currentGhost != null) Destroy(currentGhost);
 
-        if (ghostPrefab == null)
+        // Создаем призрака из префаба предмета
+        if (item.prefab == null)
         {
-            Debug.LogError("Ghost Prefab не назначен в PlacementManager!");
-            return;
+            Debug.LogError($"Prefab для {item.displayName} не назначен!");
+            // Создаем заглушку (куб)
+            currentGhost = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            currentGhost.transform.localScale = new Vector3(item.gridSize.x, item.height, item.gridSize.y);
+        }
+        else
+        {
+            currentGhost = Instantiate(item.prefab);
         }
 
-        currentGhost = Instantiate(ghostPrefab);
+        // Делаем все материалы полупрозрачными
+        MakeGhostTransparent(currentGhost);
 
-        // Меняем размер и цвет призрака в зависимости от предмета
-        Vector3 scale = new Vector3(item.gridSize.x, item.height, item.gridSize.y);
-        currentGhost.transform.localScale = scale;
-
-        // Устанавливаем цвет (полупрозрачный)
-        Renderer renderer = currentGhost.GetComponent<Renderer>();
-        if (renderer != null)
-        {
-            ghostMaterial = new Material(renderer.material);
-            ghostMaterial.color = new Color(item.prototypeColor.r, item.prototypeColor.g, item.prototypeColor.b, 0.5f);
-            renderer.material = ghostMaterial;
-        }
+        // Устанавливаем начальный цвет (зеленый)
+        UpdateGhostColor(true);
 
         // Показываем сетку
-        GridManager.Instance.ShowGrid(true);
-        UIManager.Instance.ShowNotification($"Режим строительства: {item.displayName}");
+        GridManager.Instance?.ShowGrid(true);
+        UIManager.Instance?.ShowNotification($"Режим строительства: {item.displayName}");
+    }
+
+    private void MakeGhostTransparent(GameObject obj)
+    {
+        Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
+        foreach (Renderer renderer in renderers)
+        {
+            Material[] materials = renderer.materials;
+            for (int i = 0; i < materials.Length; i++)
+            {
+                Material mat = new Material(materials[i]);
+                Color color = mat.color;
+                color.a = 0.5f;
+                mat.color = color;
+
+                // Настройка для прозрачности
+                mat.SetFloat("_Mode", 3);
+                mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                mat.SetInt("_ZWrite", 0);
+                mat.renderQueue = 3000;
+
+                materials[i] = mat;
+            }
+            renderer.materials = materials;
+        }
     }
 
     public void ExitBuildMode()
@@ -119,6 +141,9 @@ public class PlacementManager : MonoBehaviour
             // Вызываем через рефлексию или просто через публичный метод
             // Пока оставим так
         }
+
+        // Скрываем панель строительства через UIManager
+        // (добавим метод позже)
     }
 
     private bool CanPlaceItem(Vector3 position)
@@ -138,11 +163,24 @@ public class PlacementManager : MonoBehaviour
 
     private void UpdateGhostColor(bool canPlace)
     {
-        if (ghostMaterial != null)
+        if (currentGhost == null) return;
+
+        Color targetColor = canPlace ? Color.green : Color.red;
+        targetColor.a = 0.5f;
+
+        Renderer[] renderers = currentGhost.GetComponentsInChildren<Renderer>();
+        foreach (Renderer renderer in renderers)
         {
-            ghostMaterial.color = canPlace ?
-                new Color(0, 1, 0, 0.5f) : // Зеленый
-                new Color(1, 0, 0, 0.5f);   // Красный
+            Material[] materials = renderer.materials;
+            foreach (Material mat in materials)
+            {
+                Color color = mat.color;
+                color.r = targetColor.r;
+                color.g = targetColor.g;
+                color.b = targetColor.b;
+                color.a = 0.5f;
+                mat.color = color;
+            }
         }
     }
 
@@ -156,9 +194,21 @@ public class PlacementManager : MonoBehaviour
             return;
         }
 
-        // Создаем реальный объект
-        GameObject newObject = Instantiate(selectedItem.prefab, position, Quaternion.identity);
-        newObject.transform.localScale = new Vector3(selectedItem.gridSize.x, selectedItem.height, selectedItem.gridSize.y);
+        // Создаем реальный объект из префаба
+        GameObject newObject;
+        if (selectedItem.prefab != null)
+        {
+            newObject = Instantiate(selectedItem.prefab, position, Quaternion.identity);
+        }
+        else
+        {
+            // Заглушка
+            newObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            newObject.transform.localScale = new Vector3(selectedItem.gridSize.x, selectedItem.height, selectedItem.gridSize.y);
+            Renderer renderer = newObject.GetComponent<Renderer>();
+            if (renderer != null)
+                renderer.material.color = selectedItem.prototypeColor;
+        }
 
         // Добавляем компонент InteractableObject (позже)
         // newObject.AddComponent<InteractableObject>();
