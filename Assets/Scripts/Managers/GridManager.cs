@@ -105,11 +105,6 @@ public class GridManager : MonoBehaviour
         float z = Mathf.Round(worldPosition.z / gridSize) * gridSize;
         float y = height / 2f;
 
-        // Корректировка для объектов с четным размером
-        // Объект размером 1 клетку должен быть в центре клетки
-        // Объект размером 2 клетки должен быть на границе между клетками
-
-
         return new Vector3(x, y, z) + gridOffset;
     }
 
